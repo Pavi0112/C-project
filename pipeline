@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3'
+    }
+
+    stages {
+        stage('buildjob') {
+            steps {
+                echo 'Building...'
+                sh 'mvn compile'
+            }
+        }
+
+        stage('testjob') {
+            steps {
+                echo 'testing.....'
+                sh 'mvn test'
+            }
+        }
+
+        stage('deployjob') {
+            steps {
+                echo 'deploying.....'
+                sh 'mvn install'
+                archiveArtifacts artifacts: 'big3.c', followSymlinks: false
+            }
+        }
+    }
+}
