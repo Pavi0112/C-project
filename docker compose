@@ -1,0 +1,26 @@
+from flask import Flask
+from redis import Redis
+import os
+import socket
+
+# Create Flask app
+app = Flask(__name__)
+
+# Connect to Redis
+redis = Redis(
+    host=os.environ.get('REDIS_HOST', 'redis'),  # default service name in Docker
+    port=6379
+)
+
+# Route for homepage
+@app.route('/')
+def hello():
+    redis.incr('hits')  # increment visit count
+    return "Hello Container World! I have been seen {} times and my hostname is {}.\n".format(
+        redis.get('hits').decode('utf-8'),
+        socket.gethostname()
+    )
+
+# Run the app
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
